@@ -33,6 +33,8 @@ class Cluster {
         void setNextCluster(Cluster *nextCluster);
 
         void insert_node(Node *node);
+
+        Node *getNode(int id_node);
 };
 
 

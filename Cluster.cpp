@@ -4,7 +4,10 @@
 
 #include "Cluster.h"
 
-Cluster::Cluster(int id) : id(id) {}
+Cluster::Cluster(int id) {
+    this->id = id;
+    this->next_cluster = nullptr;
+}
 
 Cluster::~Cluster() {
 
@@ -36,4 +39,8 @@ void Cluster::setNextCluster(Cluster *nextCluster) {
 
 void Cluster::insert_node(Node *node){
     list_nodes.push_back(node);
+}
+
+Node *Cluster::getNode(int id_node) {
+    return list_nodes[id_node];
 }

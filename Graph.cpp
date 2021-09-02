@@ -125,10 +125,12 @@ Cluster *Graph::insertCluster(int id_cluster) {
 
 Cluster *Graph::getCluster(int id_cluster){
     Cluster *aux_cluster = first_cluster;
-    while (aux_cluster != nullptr && aux_cluster->getId() != id_cluster){
+    while (aux_cluster != nullptr){
+        if(aux_cluster->getId() == id_cluster)
+            return aux_cluster;
         aux_cluster = aux_cluster->getNextCluster();
     }
-    return aux_cluster;
+    return nullptr;
 }
 
 void Graph::insertNode(int id, int id_cluster){
@@ -139,6 +141,18 @@ void Graph::insertNode(int id, int id_cluster){
         aux_cluster = insertCluster(id_cluster);
     }
     aux_cluster->insert_node(node);
+
+    if (first_node == nullptr){
+        first_node = last_node = node;
+    }else{
+        last_node->setNextNode(node);
+        last_node = node;
+    }
+    order++;
+}
+
+void Graph::insertNode(int id){
+    Node *node = new Node(id);
 
     if (first_node == nullptr){
         first_node = last_node = node;
@@ -167,6 +181,7 @@ void Graph::insertEdge(int id, int target_id, float weight){
             }
         }
     }
+    number_edges++;
 }
 
 void Graph::removeNode(int id){
@@ -202,4 +217,80 @@ void Graph::aux_insert_edge(vector<Edge *> *list_edge, Node *start_node, Graph *
     }
 }
 
+bool Graph::isClusters() const {
+    return is_clusters;
+}
 
+void Graph::setIsClusters(bool isClusters) {
+    is_clusters = isClusters;
+}
+
+Graph* Graph::buildEmptyTree(){
+    Graph *aux =  new Graph(0, directed, weighted_edge, weighted_node, 1);
+    return aux;
+}
+
+
+Graph* Graph::greed() {
+
+    Graph *pagmg = nullptr;
+    Graph *aux_pagm = nullptr;
+    Cluster *cluster;
+    vector<Edge *> edges(number_edges);
+    Edge *aux_edge = nullptr;
+    Node *aux_node = nullptr;
+
+    int minimal_cost = -1;
+    int aux_cost = 0;
+    bool clusters_visited[clusters];
+
+    for (cluster = first_cluster; cluster != nullptr; cluster = cluster->getNextCluster()){
+        aux_pagm = buildEmptyTree();
+        aux_cost = 0;
+
+        for (int i = 0; i < clusters; i++) {
+            clusters_visited[i] = false;
+        }
+
+        clusters_visited[cluster->getId() - 1] = true;
+
+        for (int i = 0; i < cluster->getListNodes().size(); i++)
+            aux_insert_edge(&edges, cluster->getNode(i), this, clusters_visited);
+
+        for (int i = 1; i < clusters; i++){
+
+            for (aux_node = aux_pagm->getFirstNode(); aux_node != nullptr; aux_node = aux_node->getNextNode())
+                aux_insert_edge(&edges, aux_node, this, clusters_visited);
+
+            aux_edge = edges[0];
+
+            for (int i = 1; i < edges.size(); i++){
+                if (edges[i]->getWeight() < aux_edge->getWeight())
+                    aux_edge = edges[i];
+            }
+
+            if (!aux_pagm->searchNode(aux_edge->getStartId()))
+                aux_pagm->insertNode(aux_edge->getStartId());
+
+            if (!aux_pagm->searchNode(aux_edge->getTargetId()))
+                aux_pagm->insertNode(aux_edge->getTargetId());
+
+            aux_pagm->insertEdge(aux_edge->getStartId(), aux_edge->getTargetId(), aux_edge->getWeight());
+            aux_cost += aux_edge->getWeight();
+            clusters_visited[this->getNode(aux_edge->getTargetId())->getIdCluster() - 1] = true;
+
+            edges.clear();
+        }
+
+        if (aux_cost < minimal_cost){
+            if (pagmg != nullptr)
+                delete pagmg;
+            pagmg = aux_pagm;
+            minimal_cost = aux_cost;
+        }
+        else
+            delete aux_pagm;
+    }
+    std::cout << "Custo total da árvore: " << minimal_cost << endl;
+    return pagmg;
+}

@@ -30,9 +30,7 @@ Graph* readInstance(ifstream& input_file, int directed, int weightedEdge, int we
         int id_node;
         graph = new Graph(order, directed, weightedEdge, weightedNode, true);
         while (getline(input_file, id_cluster)){
-            if (id_cluster == ""){
-                break;
-            }else if(id_cluster[0] == '\r'){
+            if (id_cluster == "" ||id_cluster[0] == '\r'){
                 break;
             }
             graph->insertNode(id_node, stoi(id_cluster));
@@ -68,53 +66,6 @@ Graph* readInstance(ifstream& input_file, int directed, int weightedEdge, int we
     return graph;
 }
 
-Graph *readInstanceWithClusters(ifstream &input_file, int directed, int weightedEdge, int weightedNode){
-
-    int idNodeSource;
-    int idNodeTarget;
-    int id = 0;
-    string clusterId;
-
-    Graph *graph = new Graph(0, directed, weightedEdge, weightedNode, true);
-
-    while (getline(input_file, clusterId)){
-        if (clusterId == ""){
-            break;
-        }else if(clusterId[0] == '\r'){
-            break;
-        }
-        graph->insertNode(id, stoi(clusterId));
-        id++;
-    }
-
-    if (!graph->getWeightedEdge() && !graph->getWeightedNode()){
-        while (input_file >> idNodeSource >> idNodeTarget){
-            graph->insertEdge(idNodeSource, idNodeTarget, 0);
-        }
-    }else if (graph->getWeightedEdge() && !graph->getWeightedNode()){
-        int edgeWeight;
-        while (input_file >> idNodeSource >> idNodeTarget >> edgeWeight){
-            graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
-        }
-    }else if (graph->getWeightedNode() && !graph->getWeightedEdge()){
-        int nodeSourceWeight, nodeTargetWeight;
-        while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight){
-            graph->insertEdge(idNodeSource, idNodeTarget, 0);
-            graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
-            graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
-        }
-    }else if (graph->getWeightedNode() && graph->getWeightedEdge()){
-        int nodeSourceWeight, nodeTargetWeight, edgeWeight;
-        while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight >> edgeWeight){
-            graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
-            graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
-            graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
-        }
-    }
-    return graph;
-}
-
-
 int menu(){
 
     int selecao;
@@ -138,7 +89,16 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
 
         case 1:{
+            time_t start, end;
 
+            time(&start);
+            Graph *g = graph->greed();
+            time(&end);
+
+            double time_ex = double(end - start);
+            cout << "Built on: " << fixed;
+            cout << time_ex << setprecision(3);
+            cout << " seconds " << endl;
             break;
         }
 
