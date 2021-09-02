@@ -29,7 +29,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->is_clusters = false;
     this->first_node = this->last_node = nullptr;
     this->first_cluster = nullptr;
-    this->number_edges = 0;
+    this->clusters = 0;
 }
 
 Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node, bool is_clusters)
@@ -43,6 +43,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node, b
     this->first_node = this->last_node = nullptr;
     this->first_cluster = nullptr;
     this->number_edges = 0;
+    this->clusters = 0;
 }
 
 // Destructor
@@ -164,7 +165,8 @@ void Graph::insertNode(int id){
 }
 
 void Graph::insertEdge(int id, int target_id, float weight){
-    Node *start_node, *target_node;
+    Node *start_node = nullptr;
+    Node *target_node = nullptr;
     start_node = getNode(id);
 
     if (start_node != nullptr){
@@ -208,7 +210,7 @@ Node *Graph::getNode(int id){
     
 }
 
-void Graph::aux_insert_edge(vector<Edge *> *list_edge, Node *start_node, Graph *graph, bool *visited_clusters) {
+void Graph::aux_insert_edge(vector<Edge *> *list_edge, Node *start_node, Graph *graph, bool visited_clusters[]) {
     Edge *edge = graph->getNode(start_node->getId())->getFirstEdge();
     while (edge != nullptr){
         if (!visited_clusters[graph->getNode(edge->getTargetId())->getIdCluster() - 1])

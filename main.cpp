@@ -27,7 +27,7 @@ Graph* readInstance(ifstream& input_file, int directed, int weightedEdge, int we
         graph = new Graph(order, directed, weightedEdge, weightedNode);
     }else{
         string id_cluster;
-        int id_node;
+        int id_node = 0;
         graph = new Graph(order, directed, weightedEdge, weightedNode, true);
         while (getline(input_file, id_cluster)){
             if (id_cluster == "" ||id_cluster[0] == '\r'){
@@ -76,7 +76,8 @@ int menu(){
     cout << "[2] Algoritmo Guloso Randomizado " << endl;
     cout << "[3] Algoritmo Guloso Randomizado Reativo" << endl;
     cout << "[0] Sair" << endl;
-
+    cout << "----------------------------------------" << endl;
+    cout << "Digite a opcao desejada: ";
     cin >> selecao;
 
     return selecao;
