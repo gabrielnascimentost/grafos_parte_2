@@ -11,6 +11,7 @@
 #include <ctime>
 #include <float.h>
 #include <iomanip>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -52,9 +53,7 @@ Graph::~Graph()
 
     Node *next_node = this->first_node;
 
-    while (next_node != nullptr)
-    {
-
+    while (next_node != nullptr){
         next_node->removeAllEdges();
         Node *aux_node = next_node->getNextNode();
         delete next_node;
@@ -238,11 +237,11 @@ Graph* Graph::greed() {
     Graph *pagmg = nullptr;
     Graph *aux_pagm = nullptr;
     Cluster *cluster;
-    vector<Edge *> edges(number_edges);
+    vector<Edge *> edges;
     Edge *aux_edge = nullptr;
     Node *aux_node = nullptr;
 
-    int minimal_cost = -1;
+    int minimal_cost = INT_MAX;
     int aux_cost = 0;
     bool clusters_visited[clusters];
 
@@ -256,13 +255,19 @@ Graph* Graph::greed() {
 
         clusters_visited[cluster->getId() - 1] = true;
 
-        for (int i = 0; i < cluster->getListNodes().size(); i++)
-            aux_insert_edge(&edges, cluster->getNode(i), this, clusters_visited);
+        for (int i = 0; i < cluster->getListNodes().size(); i++){
+            Edge *edge = this->getNode(cluster->getNode(i)->getId())->getFirstEdge();
+            while (edge != nullptr){
+                if (!clusters_visited[this->getNode(edge->getTargetId())->getIdCluster() - 1])
+                    edges.push_back(edge);
+                edge = edge->getNextEdge();
+            }
+        }
 
         for (int i = 1; i < clusters; i++){
-
-            for (aux_node = aux_pagm->getFirstNode(); aux_node != nullptr; aux_node = aux_node->getNextNode())
+            for (aux_node = aux_pagm->getFirstNode(); aux_node != nullptr; aux_node = aux_node->getNextNode()){
                 aux_insert_edge(&edges, aux_node, this, clusters_visited);
+            }
 
             aux_edge = edges[0];
 
@@ -293,6 +298,6 @@ Graph* Graph::greed() {
         else
             delete aux_pagm;
     }
-    std::cout << "Custo total da árvore: " << minimal_cost << endl;
+    std::cout << "Minimal cost of tree: " << minimal_cost << endl;
     return pagmg;
 }

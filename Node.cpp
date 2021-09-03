@@ -110,17 +110,16 @@ void Node::insertEdge(int target_id, float weight){
     // Verifies whether there are at least one edge in the node
     if(this->first_edge != nullptr){
         // Allocating the new edge and keeping the integrity of the edge list
-        Edge* edge = new Edge(target_id);
-        edge->setWeight(weight);
+        Edge* edge = new Edge(id, target_id, weight);
         this->last_edge->setNextEdge(edge);
         this->last_edge = edge;
 
     }
     else{
          // Allocating the new edge and keeping the integrity of the edge list
-        this->first_edge = new Edge(target_id);
-        this->first_edge->setWeight(weight);
+        this->first_edge = new Edge(id, target_id, weight);
         this->last_edge = this->first_edge;
+        this->last_edge->setNextEdge(nullptr);
 
     }
 
@@ -128,19 +127,8 @@ void Node::insertEdge(int target_id, float weight){
 
 void Node::removeAllEdges(){
     // Verifies whether there are at least one edge in the node
-    if(this->first_edge != nullptr){
-
-        Edge* next = nullptr;
-        Edge* aux = this->first_edge;
-        // Removing all edges of the node
-        while(aux != nullptr){
-
-            next = aux->getNextEdge();
-            delete aux;
-
-        }
-
-    }
+    if(this->first_edge != nullptr)
+        delete first_edge;
 
     this->first_edge = this->last_edge = nullptr;
 
