@@ -125,12 +125,9 @@ Cluster *Graph::insertCluster(int id_cluster) {
 
 Cluster *Graph::getCluster(int id_cluster){
     Cluster *aux_cluster = first_cluster;
-    while (aux_cluster != nullptr){
-        if(aux_cluster->getId() == id_cluster)
-            return aux_cluster;
+    while (aux_cluster != nullptr && aux_cluster->getId() != id_cluster)
         aux_cluster = aux_cluster->getNextCluster();
-    }
-    return nullptr;
+    return aux_cluster;
 }
 
 void Graph::insertNode(int id, int id_cluster){
@@ -227,7 +224,7 @@ void Graph::setIsClusters(bool isClusters) {
 }
 
 Graph* Graph::buildEmptyTree(){
-    Graph *aux =  new Graph(0, directed, weighted_edge, weighted_node, 1);
+    Graph *aux =  new Graph(0, directed, weighted_edge, weighted_node, is_clusters);
     return aux;
 }
 

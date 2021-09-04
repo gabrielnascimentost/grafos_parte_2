@@ -12,13 +12,36 @@
 
 using namespace std;
 
+void buildOutputFile(Graph *graph, ofstream &output_file){
+    if (graph != nullptr){
+        Node *aux_node = graph->getFirstNode();
+        Edge *aux_edge;
+        int size_graph = graph->getOrder();
+
+        output_file << "graph {" << endl;
+        for (int i = 0; i < size_graph; i++){
+            aux_edge = aux_node->getFirstEdge();
+            int aux = 0;
+            while ((aux < (aux_node->getOutDegree() + aux_node->getInDegree())) && aux_edge != nullptr){
+                output_file << "\t" << aux_node->getId() << " -- " << aux_edge->getTargetId() << ";" << endl;
+                aux_edge = aux_edge->getNextEdge();
+                aux++;
+            }
+            aux_node = aux_node->getNextNode();
+        }
+        output_file << "}" << endl;
+    }
+}
+
+
+
 Graph* readInstance(ifstream& input_file, int directed, int weightedEdge, int weightedNode, int is_clusters){
 
     //Variáveis para auxiliar na criação dos nós no Grafo
     int idNodeSource;
     int idNodeTarget;
-    int order = 0;
     Graph* graph;
+    int order = 0;
 
     if(is_clusters == false){
         //Pegando a ordem do grafo
@@ -93,13 +116,16 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             time_t start, end;
 
             time(&start);
-            Graph *g = graph->greed();
+            Graph *aux_graph;
+            aux_graph = graph->greed();
             time(&end);
 
             double time_ex = double(end - start);
             cout << "Built on: " << fixed;
-            cout << time_ex << setprecision(3);
+            cout << time_ex << setprecision(5);
             cout << " seconds " << endl;
+
+            buildOutputFile(aux_graph, output_file);
             break;
         }
 
