@@ -228,6 +228,10 @@ Graph* Graph::buildEmptyTree(){
     return aux;
 }
 
+bool myFunctionToCompareEdges(Edge *a, Edge *b){
+    return a->getWeight() < b->getWeight();
+}
+
 
 Graph* Graph::greed() {
 
@@ -279,9 +283,9 @@ Graph* Graph::greed() {
             if (!aux_pagm->searchNode(aux_edge->getTargetId()))
                 aux_pagm->insertNode(aux_edge->getTargetId());
 
-            aux_pagm->insertEdge(aux_edge->getStartId(), aux_edge->getTargetId(), aux_edge->getWeight());
             aux_cost += aux_edge->getWeight();
             clusters_visited[this->getNode(aux_edge->getTargetId())->getIdCluster() - 1] = true;
+            aux_pagm->insertEdge(aux_edge->getStartId(), aux_edge->getTargetId(), aux_edge->getWeight());
 
             edges.clear();
         }
@@ -302,6 +306,7 @@ Graph* Graph::greed() {
 Graph* Graph::greedRandom(float alpha) {
     Graph *pagmg = nullptr;
     Graph *aux_pagm = nullptr;
+
     Cluster *cluster;
     vector<Edge *> edges;
     Edge *aux_edge = nullptr;
@@ -309,7 +314,10 @@ Graph* Graph::greedRandom(float alpha) {
 
     int minimal_cost = INT_MAX;
     int aux_cost = 0;
+    float max_weight_edge = 0;
     bool clusters_visited[clusters];
+
+    srand(time(NULL));
 
     for (cluster = first_cluster; cluster != nullptr; cluster = cluster->getNextCluster()){
         aux_pagm = buildEmptyTree();
@@ -334,12 +342,18 @@ Graph* Graph::greedRandom(float alpha) {
             for (aux_node = aux_pagm->getFirstNode(); aux_node != nullptr; aux_node = aux_node->getNextNode()){
                 aux_insert_edge(&edges, aux_node, this, clusters_visited);
             }
-
-            aux_edge = edges[0];
+            sort(edges.begin(), edges.end(), myFunctionToCompareEdges);
+            max_weight_edge = edges.back()->getWeight() + alpha * (edges.front()->getWeight() - edges.back()->getWeight());
 
             for (int i = 1; i < edges.size(); i++){
-                if (edges[i]->getWeight() < aux_edge->getWeight())
-                    aux_edge = edges[i];
+                if (edges[i]->getWeight() == max_weight_edge){
+                    aux_edge = edges[rand()%(i+1)];
+                    break;
+                }
+                if(edges[i]->getWeight() > max_weight_edge){
+                    aux_edge = edges[rand() % i];
+                    break;
+                }
             }
 
             if (!aux_pagm->searchNode(aux_edge->getStartId()))
@@ -348,9 +362,9 @@ Graph* Graph::greedRandom(float alpha) {
             if (!aux_pagm->searchNode(aux_edge->getTargetId()))
                 aux_pagm->insertNode(aux_edge->getTargetId());
 
-            aux_pagm->insertEdge(aux_edge->getStartId(), aux_edge->getTargetId(), aux_edge->getWeight());
             aux_cost += aux_edge->getWeight();
             clusters_visited[this->getNode(aux_edge->getTargetId())->getIdCluster() - 1] = true;
+            aux_pagm->insertEdge(aux_edge->getStartId(), aux_edge->getTargetId(), aux_edge->getWeight());
 
             edges.clear();
         }
