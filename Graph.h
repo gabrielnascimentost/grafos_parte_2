@@ -57,7 +57,7 @@ class Graph{
 
         //methods phase1
         Graph* greed();
-        Graph* greedRandom();
+        Graph* greedRandom(float alpha);
         Graph* greedRactiveRandom();
 
 };

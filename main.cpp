@@ -130,7 +130,27 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
         }
 
         case 2:{
+            time_t start, end;
+            float alpha;
+            cout << "Digite o valor de alpha (de 0.01 a 0.09): ";
+            cin >> alpha;
 
+            if(!(alpha > 0.01 && alpha < 0.09)){
+                cout << "Alpha out of range" << endl << endl;
+                break;
+            }
+
+            time(&start);
+            Graph *aux_graph;
+            aux_graph = graph->greedRandom(alpha);
+            time(&end);
+
+            double time_ex = double(end - start);
+            cout << "Built on: " << fixed;
+            cout << time_ex << setprecision(5);
+            cout << " seconds " << endl;
+
+            buildOutputFile(aux_graph, output_file);
             break;
         }
 
