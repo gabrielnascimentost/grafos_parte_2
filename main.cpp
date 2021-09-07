@@ -139,7 +139,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
             if(!(alpha >= 0.01 && alpha <= 0.09)){
                 cout << "Alpha out of range" << endl << endl;
-                break;
+                alpha = 1.00;
             }
 
             time(&start);
@@ -174,9 +174,10 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
                 cout << "Alpha [" << i + 1 << "]: ";
                 cin >> alphas[i];
                 if(!(alphas[i] >= 0.009 && alphas[i] <= 0.09)){
-                    cout << "Alpha out of range" << endl << endl;
-                    break;
+                    cout << "Alpha out of range" << endl << endl; //se o usuário digitar um valor fora do range permitido, atribuo um valor padrão
+                    alphas[i] = 1.00;
                 }
+
             }
 
             time(&start);

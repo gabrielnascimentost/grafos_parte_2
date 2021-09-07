@@ -1,0 +1,27 @@
+Grupo 32
+Gabriel Nascimento MAT: 201376133
+Problema: Problema da Árvore Geradora Mínima Generalizado
+
+**Instruções para executar o  programa**
+
+Passos
+1- Navegar até a pasta contendo os arquivos fonte do programa
+
+2- Abrir o terminal nesta pasta ou acessar a mesma via terminal (no passo 1)
+
+3- Compilar o programa com o seguinte comando -> "g++ *.cpp -o "grupo32""
+
+4- Executar o programa com o seguinte comando -> "./grupo32.exe 10att48.clu saida.txt 0 1 0 1" 
+	Explicando a sequência:
+	A sequência é "./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> <cluster>"
+
+5- Durante a execução, é exibido um menu com as seguintes opções: 1 - Guloso, 2 - Guloso Randomizado e 3 - Guloso Randomizado Reativo
+	Ao selecionar a opção 1, o programa executa o algoritmo guloso e exibi o custo da solução gerada e o tempo gasto para a mesma
+	Ao selecionar a opção 2, o programa solicita que o usuário entre com um alpha e caso seja um valor inválido, é atribuio um valor padrão. 
+Posteriormente, executa o programa.
+	Ao selecionar a opção 3, o programa solicita que o usuário entre com de alphas a serem usados na busca. Posteriormente, o usuário entra com 
+os valores de alpha. Por fim, o programa executa a busca.
+
+6- Além disso, o programa imprime a solução encontrada no arquivo de saída.
+
+Fim!
