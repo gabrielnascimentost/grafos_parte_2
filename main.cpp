@@ -125,17 +125,19 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             cout << time_ex << setprecision(5);
             cout << " seconds " << endl;
 
+            cout << "Writing data on output file....";
             buildOutputFile(aux_graph, output_file);
+            system("pause");
             break;
         }
 
         case 2:{
             time_t start, end;
-            float alpha;
+            float alpha = 0.01;
             cout << "Digite o valor de alpha (de 0.01 a 0.09): ";
             cin >> alpha;
 
-            if(!(alpha > 0.01 && alpha < 0.09)){
+            if(!(alpha >= 0.01 && alpha <= 0.09)){
                 cout << "Alpha out of range" << endl << endl;
                 break;
             }
@@ -150,12 +152,46 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             cout << time_ex << setprecision(5);
             cout << " seconds " << endl;
 
+            cout << "Writing data on output file....";
             buildOutputFile(aux_graph, output_file);
+            system("pause");
             break;
         }
 
         case 3:{
+            time_t start, end;
+            int num_alphas = 0;
+            cout << "Digite a quantidade alphas a serem usados: ";
+            cin >> num_alphas;
+            if(!(num_alphas > 0 && num_alphas < 1000)){
+                cout << "Error. Size out of bound" << endl << endl;
+                break;
+            }
+            float *alphas = new float[num_alphas];
 
+            for (int i = 0; i < num_alphas; i++)
+            {
+                cout << "Alpha [" << i + 1 << "]: ";
+                cin >> alphas[i];
+                if(!(alphas[i] >= 0.009 && alphas[i] <= 0.09)){
+                    cout << "Alpha out of range" << endl << endl;
+                    break;
+                }
+            }
+
+            time(&start);
+            Graph *aux_graph;
+            aux_graph = graph->greedRactiveRandom(alphas, num_alphas);
+            time(&end);
+
+            double time_ex = double(end - start);
+            cout << "Built on: " << fixed;
+            cout << time_ex << setprecision(5);
+            cout << " seconds " << endl;
+
+            cout << "Writing data on output file....";
+            buildOutputFile(aux_graph, output_file);
+            system("pause");
             break;
         }
 

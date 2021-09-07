@@ -382,6 +382,85 @@ Graph* Graph::greedRandom(float alpha) {
     return pagmg;
 }
 
-Graph *Graph::greedRactiveRandom() {
-    
+Graph *Graph::greedRactiveRandom(float *alphas, int num_alphas) {
+    Graph *pagmg = nullptr;
+    Graph *aux_pagm = nullptr;
+
+    Cluster *cluster;
+    vector<Edge *> edges;
+    Edge *aux_edge = nullptr;
+    Node *aux_node = nullptr;
+
+    int minimal_cost = INT_MAX;
+    int aux_cost = 0;
+    int aux_index_alpha = 0;
+    float max_weight_edge = 0;
+    bool clusters_visited[clusters];
+
+    srand(time(NULL));
+
+    for (cluster = first_cluster; cluster != nullptr; cluster = cluster->getNextCluster()){
+        aux_pagm = buildEmptyTree();
+        aux_cost = 0;
+
+        for (int i = 0; i < clusters; i++) {
+            clusters_visited[i] = false;
+        }
+
+        clusters_visited[cluster->getId() - 1] = true;
+
+        for (int i = 0; i < cluster->getListNodes().size(); i++){
+            Edge *edge = this->getNode(cluster->getNode(i)->getId())->getFirstEdge();
+            while (edge != nullptr){
+                if (!clusters_visited[this->getNode(edge->getTargetId())->getIdCluster() - 1])
+                    edges.push_back(edge);
+                edge = edge->getNextEdge();
+            }
+        }
+
+        for (int i = 1; i < clusters; i++){
+            for (aux_node = aux_pagm->getFirstNode(); aux_node != nullptr; aux_node = aux_node->getNextNode()){
+                aux_insert_edge(&edges, aux_node, this, clusters_visited);
+            }
+            sort(edges.begin(), edges.end(), myFunctionToCompareEdges);
+            aux_index_alpha = rand() % num_alphas;
+            max_weight_edge = edges.back()->getWeight() + alphas[aux_index_alpha] * (edges.front()->getWeight() - edges.back()->getWeight());
+
+            for (int i = 1; i < edges.size(); i++){
+                if (edges[i]->getWeight() == max_weight_edge){
+                    aux_edge = edges[rand()%(i+1)];
+                    break;
+                }
+                if(edges[i]->getWeight() > max_weight_edge){
+                    aux_edge = edges[rand() % i];
+                    break;
+                }
+            }
+
+            if (!aux_pagm->searchNode(aux_edge->getStartId()))
+                aux_pagm->insertNode(aux_edge->getStartId());
+
+            if (!aux_pagm->searchNode(aux_edge->getTargetId()))
+                aux_pagm->insertNode(aux_edge->getTargetId());
+
+            aux_cost += aux_edge->getWeight();
+            clusters_visited[this->getNode(aux_edge->getTargetId())->getIdCluster() - 1] = true;
+            aux_pagm->insertEdge(aux_edge->getStartId(), aux_edge->getTargetId(), aux_edge->getWeight());
+
+            edges.clear();
+        }
+
+        if (aux_cost < minimal_cost){
+            if (pagmg != nullptr)
+                delete pagmg;
+            pagmg = aux_pagm;
+            minimal_cost = aux_cost;
+            alphas[aux_index_alpha] = 1.00;
+            aux_index_alpha = 0;
+        }
+        else
+            delete aux_pagm;
+    }
+    std::cout << "Minimal cost of tree: " << minimal_cost << endl;
+    return pagmg;
 }
