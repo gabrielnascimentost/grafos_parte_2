@@ -93,7 +93,7 @@ int menu(){
 
     int selecao;
 
-    cout << "MENU" << endl;
+    cout << endl << "MENU" << endl;
     cout << "------------------Parte 2--------------" << endl;
     cout << "[1] Algoritmo Guloso" << endl;
     cout << "[2] Algoritmo Guloso Randomizado " << endl;
